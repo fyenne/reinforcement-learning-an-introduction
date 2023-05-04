@@ -8,7 +8,10 @@ import matplotlib.pyplot as plt
 
 
 class ArmedBanditTestbedEnv(gym.Env):
-    """ Armed Bandit Testbed per Example 2.2 (stationary=True) or Exercise 2.5 (stationary=False) """
+    """
+    Armed Bandit Testbed per Example 2.2 (stationary=True) or Exercise 2.5 (stationary=False) 
+    #q_star (true values of the expected rewards of each arm) 
+    """
     def __init__(self, n=10, stationary=True):
         self.observation_space = gym.spaces.Discrete(1)
         self.action_space = gym.spaces.Discrete(n)
@@ -16,11 +19,16 @@ class ArmedBanditTestbedEnv(gym.Env):
         self.np_random = None
         self.seed()
 
-        self.q_star = None
+        self.q_star = None 
         self.a_star = None
         self.reset()
 
     def step(self, arm):
+        """
+        The step method takes an action (an integer representing which arm the gambler chooses) 
+        and returns the reward for that action, 
+        whether the episode is done, and some additional information (the best arm).
+        """
         assert self.action_space.contains(arm)
 
         if self.stationary is False:
@@ -60,7 +68,19 @@ gym.envs.registration.register(
 
 
 def run_episode(bandit, gambler, seed=None):
-    """ Execute a single episode of the Armed Bandit Testbed environment. """
+    """
+    Execute a single episode of the Armed Bandit Testbed environment.
+    
+    executes a single episode of the environment 
+    and returns the rewards, whether the gambler chose the best arm, 
+    and the number of steps taken. 
+    The function takes two inputs: 
+    1. the environment 
+    2. and the gambler 
+    (an object with a method called "arm" that chooses which arm to pull 
+    and a method called "update" that updates its estimate of 
+    the expected reward of the chosen arm based on the actual reward received).
+    """
     rewards, corrects, steps = [], [], 0
 
     bandit.seed(seed)
@@ -79,6 +99,6 @@ def run_episode(bandit, gambler, seed=None):
         corrects += [1 if arm == info['arm_star'] else 0]
         steps += 1
 
-    rewards = np.array(rewards, dtype=np.float)
-    corrects = np.array(corrects, dtype=np.int)
+    rewards = np.array(rewards, dtype= float)
+    corrects = np.array(corrects, dtype=int)
     return rewards, corrects, steps
